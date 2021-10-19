@@ -1,6 +1,8 @@
 
 FROM node:16.6.2-alpine3.11
 
+RUN npm install -g nodemon
+
 USER node
 
 RUN mkdir -p /home/node/app
@@ -10,6 +12,7 @@ WORKDIR /home/node/app
 COPY --chown=node package*.json ./
 
 RUN npm install
+
 
 COPY --chown=node . .
 

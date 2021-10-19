@@ -1,6 +1,8 @@
 
 FROM node:16.6.2-alpine3.11 AS build-env
 
+RUN npm install -g @vue/cli
+
 USER node
 
 RUN mkdir -p /home/node/app
