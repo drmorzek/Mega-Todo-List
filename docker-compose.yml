@@ -38,7 +38,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      PORT: 5000
+      PORT: "${HTTP_PORT}"
       MYSQL_HOST: db
       MYSQL_DATABASE: "${DB_BASENAME}"
       MYSQL_USER: "${DB_USER}"
