@@ -1,0 +1,70 @@
+version: '3'
+
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: DockerfIle-dev
+    restart: always
+    command: npm run serve
+    stdin_open: true
+    depends_on:
+      - db
+      - backend
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - ./frontend:/home/node/app
+
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: todolist
+      MYSQL_USER: toor
+      MYSQL_PASSWORD: toor
+    volumes:
+      - ./db:/var/lib/mysql
+
+  adminer:
+    image: adminer:standalone
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db  
+  
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      PORT: 4000
+      MYSQL_HOST: db
+      MYSQL_DATABASE: todolist
+      MYSQL_USER: toor
+      MYSQL_PASSWORD: toor
+    command: npm run dev
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/home/node/app
+  
+  nginx:
+    depends_on:
+      - backend
+      - frontend
+    restart: always
+    build:
+      context: ./nginx
+      dockerfile: DockerfIle-dev
+    ports:
+      - "4000:80"
+    volumes:
+      - ./nginx/dev:/etc/nginx/conf.d/
+  

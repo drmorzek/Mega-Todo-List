@@ -1,0 +1,16 @@
+
+FROM node:16.6.2-alpine3.11 AS build-env
+
+USER node
+
+RUN mkdir -p /home/node/app
+
+WORKDIR /home/node/app
+
+COPY --chown=node package*.json ./
+
+RUN npm install
+
+COPY --chown=node . .
+
+VOLUME [ "/home/node/app" ]

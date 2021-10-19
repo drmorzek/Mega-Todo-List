@@ -1,0 +1,25 @@
+
+FROM node:16.6.2-alpine3.11 AS build-env
+
+USER node
+
+RUN mkdir -p /home/node/app
+
+WORKDIR /home/node/app
+
+COPY --chown=node package*.json ./
+
+RUN npm install
+
+COPY --chown=node . .
+
+RUN npm run build
+
+
+FROM nginx:1.21-alpine
+
+WORKDIR /usr/share/nginx/html
+
+COPY --from=build-env /home/node/app/dist /usr/share/nginx/html
+
+EXPOSE 80
