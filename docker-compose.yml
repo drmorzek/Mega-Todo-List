@@ -2,7 +2,7 @@ version: '3'
 
 services:
   frontend:
-    container_name: frontend
+    container_name: todolist-frontend
     build:
       context: ./frontend
       dockerfile: DockerfIle
@@ -12,19 +12,21 @@ services:
       - backend
 
   db:
-    image: mysql:8.0
-    command: --default-authentication-plugin=mysql_native_password
+    image: woahbase/alpine-mysql:x86_64
+    container_name: todolist-mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
-      MYSQL_DATABASE: "${DB_BASENAME}"
+      MYSQL_ROOT_PW: "${DB_ROOT_PASSWORD}"
+      MYSQL_USER_DB: "${DB_BASENAME}"
       MYSQL_USER: "${DB_USER}"
-      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_USER_PWD: "${DB_PASSWORD}"
     volumes:
-      - ./db:/var/lib/mysql
+      - ./mysql/db:/var/lib/mysql
+      - ./mysql/config:/etc/mysql
 
   adminer:
     image: adminer:standalone
+    container_name: todolist-adminer
     restart: always
     ports:
       - "${ADMINER_PORT}:8080"
@@ -32,7 +34,7 @@ services:
       - db  
   
   backend:
-    container_name: backend
+    container_name: todolist-backend
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -48,6 +50,7 @@ services:
       - adminer
   
   nginx:
+    container_name: todolist-nginx
     depends_on:
       - backend
       - frontend
@@ -58,5 +61,5 @@ services:
     ports:
       - "${HTTP_PORT}:80"
     volumes:
-      - ./nginx/prod:/etc/nginx/conf.d/
+      - ./nginx/config:/etc/nginx/conf.d/
   
