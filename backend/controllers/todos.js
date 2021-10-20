@@ -135,7 +135,7 @@ module.exports.deleteTodoById = async (req, res) => {
 
             res.status(200).json({
                 data: del
-        })
+            })
 
         } else {
             res.status(404).json({
